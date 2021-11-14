@@ -19,7 +19,7 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <flink.version>1.12.1</flink.version>
-        <scala.version>2.11</scala.version>
+        <scala.version>2.12</scala.version>
         <log4j.version>2.12.1</log4j.version>
     </properties>
 
@@ -28,13 +28,13 @@
         <dependencies>
             <dependency>
                 <groupId>org.apache.flink</groupId>
-                <artifactId>flink-streaming-java_2.11</artifactId>
+                <artifactId>flink-streaming-java_2.12</artifactId>
                 <version>${flink.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.flink</groupId>
-                <artifactId>flink-clients_${scala.version}</artifactId>
+                <artifactId>flink-clients_2.11</artifactId>
                 <version>${flink.version}</version>
             </dependency>
             <dependency>
@@ -42,6 +42,12 @@
                 <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-connector-kafka_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
@@ -52,6 +58,8 @@
                 <artifactId>log4j-slf4j-impl</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 </project>
