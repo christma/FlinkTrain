@@ -23,30 +23,11 @@ public class StreamingWC {
 
         DataStreamSource<String> source = env.socketTextStream("localhost", 9527);
 
-        SingleOutputStreamOperator<Tuple2<String, Integer>> sum = source.flatMap(new FlatMapFunction<String, String>() {
-                    @Override
-                    public void flatMap(String lines, Collector<String> out) throws Exception {
-                        String[] words = lines.split(",");
-                        for (String word : words) {
-                            out.collect(word.toLowerCase().trim());
-                        }
-                    }
-                }).filter(new FilterFunction<String>() {
-                    @Override
-                    public boolean filter(String s) throws Exception {
-                        return StringUtils.isNotEmpty(s);
-                    }
-                }).map(new MapFunction<String, Tuple2<String, Integer>>() {
-                    @Override
-                    public Tuple2<String, Integer> map(String value) throws Exception {
-                        return new Tuple2<>(value, 1);
-                    }
-                }).keyBy(new KeySelector<Tuple2<String, Integer>, Object>() {
-                    @Override
-                    public Object getKey(Tuple2<String, Integer> key) throws Exception {
-                        return key.f0;
-                    }
-                })
+        SingleOutputStreamOperator<Tuple2<String, Integer>> sum = source
+                .flatMap(new MyFlatMapFunction())
+                .filter(new MyFilter())
+                .map(new MyMap())
+                .keyBy(new MyKeyBy())
                 .sum(1);
 
         sum.print();
@@ -55,4 +36,39 @@ public class StreamingWC {
         env.execute("StreamingWC");
 
     }
+
+    static class MyFlatMapFunction implements FlatMapFunction<String, String> {
+
+        @Override
+        public void flatMap(String lines, Collector<String> out) throws Exception {
+            String[] words = lines.split(",");
+            for (String word : words) {
+                out.collect(word);
+            }
+        }
+    }
+
+    static class MyFilter implements FilterFunction<String> {
+
+        @Override
+        public boolean filter(String s) throws Exception {
+            return StringUtils.isNotEmpty(s);
+        }
+    }
+
+    static class MyMap implements MapFunction<String, Tuple2<String, Integer>> {
+        @Override
+        public Tuple2<String, Integer> map(String s) throws Exception {
+            return new Tuple2<>(s, 1);
+        }
+    }
+
+    static class MyKeyBy implements KeySelector<Tuple2<String, Integer>, String> {
+
+        @Override
+        public String getKey(Tuple2<String, Integer> tuple2) throws Exception {
+            return tuple2.f0;
+        }
+    }
+
 }
