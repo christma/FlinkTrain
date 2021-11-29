@@ -1,13 +1,11 @@
 package transformation;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.flink.api.common.functions.FilterFunction;
-import org.apache.flink.api.common.functions.FlatMapFunction;
-import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.common.operators.util.FieldList;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -24,7 +22,9 @@ public class TransformationApp {
 //        flatMap(environment);
 
 //        KeyBy(environment);
-        reduce(environment);
+//        reduce(environment);
+        environment.setParallelism(2);
+        RichMap(environment);
         environment.execute("TransformationApp");
 
     }
@@ -116,6 +116,44 @@ public class TransformationApp {
                         return Tuple2.of(t1.f0, t1.f1 + t2.f1);
                     }
                 }).print();
+
     }
 
+    public static void RichMap(StreamExecutionEnvironment env) {
+
+        DataStreamSource<String> source = env.readTextFile("datas/access.log");
+
+        source.setParallelism(1).map(new MPFuncation()).print();
+    }
+}
+
+class MPFuncation extends RichMapFunction<String, Access> {
+
+    @Override
+    public void open(Configuration parameters) throws Exception {
+        super.open(parameters);
+        System.out.println("~~~~open ~~~~");
+    }
+
+    @Override
+    public void close() throws Exception {
+        super.close();
+    }
+
+    @Override
+    public RuntimeContext getRuntimeContext() {
+        return super.getRuntimeContext();
+    }
+
+    @Override
+    public Access map(String lines) throws Exception {
+
+        System.out.println("~~~~~map ~~~");
+        String[] splits = lines.split(",");
+        long time = Long.parseLong(splits[0]);
+        String domain = splits[1];
+        double traffic = Double.parseDouble(splits[2]);
+
+        return new Access(time, domain, traffic);
+    }
 }
