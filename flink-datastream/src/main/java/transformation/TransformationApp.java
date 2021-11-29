@@ -1,16 +1,17 @@
 package transformation;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.flink.api.common.functions.*;
-import org.apache.flink.api.common.operators.util.FieldList;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.Collector;
-import scala.Int;
+
+import java.util.Random;
+
 
 public class TransformationApp {
 
@@ -23,10 +24,17 @@ public class TransformationApp {
 
 //        KeyBy(environment);
 //        reduce(environment);
-        environment.setParallelism(2);
-        RichMap(environment);
+//        environment.setParallelism(2);
+//        RichMap(environment);
+        StudentSource(environment);
         environment.execute("TransformationApp");
 
+    }
+
+    public static void StudentSource(StreamExecutionEnvironment env) {
+        DataStreamSource<Student> source = env.addSource(new StudentSource());
+        System.out.println(source.getParallelism());
+        source.print();
     }
 
 
@@ -125,6 +133,12 @@ public class TransformationApp {
 
         source.setParallelism(1).map(new MPFuncation()).print();
     }
+
+    public static void defaultSource(StreamExecutionEnvironment env) {
+        DataStreamSource<Access> source = env.addSource(new MPFuncation.AccessSource());
+        System.out.println(source.getParallelism());
+        source.print();
+    }
 }
 
 class MPFuncation extends RichMapFunction<String, Access> {
@@ -156,4 +170,35 @@ class MPFuncation extends RichMapFunction<String, Access> {
 
         return new Access(time, domain, traffic);
     }
+
+
+    static class AccessSource implements SourceFunction<Access> {
+
+        String[] domain = {"a.com", "b.com", "c.com", "d.com", "e.com"};
+
+        boolean running = true;
+        Random random = new Random();
+
+        @Override
+        public void run(SourceContext<Access> ctx) throws Exception {
+            while (running) {
+                for (int i = 0; i < 10; i++) {
+                    Access access = new Access();
+                    access.setTime(1234556L);
+                    access.setDomain(domain[random.nextInt(domain.length)]);
+                    access.setTraffic(random.nextDouble() + 1000);
+                    ctx.collect(access);
+                }
+                Thread.sleep(5000);
+            }
+
+        }
+
+        @Override
+        public void cancel() {
+            running = false;
+        }
+    }
+
+
 }
