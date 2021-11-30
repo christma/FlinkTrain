@@ -11,8 +11,12 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.co.CoMapFunction;
 import org.apache.flink.streaming.api.functions.source.RichParallelSourceFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
+import org.apache.flink.streaming.connectors.redis.RedisSink;
+import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisClusterConfig;
+import org.apache.flink.streaming.connectors.redis.common.config.FlinkJedisPoolConfig;
 import org.apache.flink.util.Collector;
 import sink.MySQLSink;
+import sink.RedisExampleMapper;
 
 import java.util.Locale;
 import java.util.Random;
@@ -32,7 +36,7 @@ public class TransformationApp {
 //        environment.setParallelism(2);
 //        RichMap(environment);
 //        CoMap(environment);
-        defaultSource(environment);
+        SourceToRedis(environment);
         environment.execute("TransformationApp");
 
     }
@@ -183,6 +187,28 @@ public class TransformationApp {
             }
         }).addSink(new MySQLSink());
     }
+
+    public static void SourceToRedis(StreamExecutionEnvironment env) {
+        DataStreamSource<Access> source = env.addSource(new MPFuncation.AccessSource());
+        System.out.println(source.getParallelism());
+        SingleOutputStreamOperator<Access> traffic = source.keyBy(new KeySelector<Access, String>() {
+            @Override
+            public String getKey(Access access) throws Exception {
+                return access.getDomain();
+            }
+        }).sum("traffic");
+
+        traffic.print();
+
+        FlinkJedisPoolConfig conf = new FlinkJedisPoolConfig.Builder().setHost("127.0.0.1").build();
+        traffic.map(new MapFunction<Access, Tuple2<String, Double>>() {
+            @Override
+            public Tuple2<String, Double> map(Access access) throws Exception {
+                return Tuple2.of(access.getDomain(), access.getTraffic());
+            }
+        }).addSink(new RedisSink<Tuple2<String, Double>>(conf, new RedisExampleMapper()));
+    }
+
 }
 
 class MPFuncation extends RichMapFunction<String, Access> {
