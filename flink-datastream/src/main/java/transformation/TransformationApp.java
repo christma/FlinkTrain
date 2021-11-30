@@ -4,12 +4,15 @@ import org.apache.flink.api.common.functions.*;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.datastream.ConnectedStreams;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.co.CoMapFunction;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
 import org.apache.flink.util.Collector;
 
+import java.util.Locale;
 import java.util.Random;
 
 
@@ -26,7 +29,7 @@ public class TransformationApp {
 //        reduce(environment);
 //        environment.setParallelism(2);
 //        RichMap(environment);
-        StudentSource(environment);
+        CoMap(environment);
         environment.execute("TransformationApp");
 
     }
@@ -37,6 +40,30 @@ public class TransformationApp {
         source.print();
     }
 
+
+    public static void CoMap(StreamExecutionEnvironment env) {
+        DataStreamSource<String> stream1 = env.socketTextStream("localhost", 9527);
+        SingleOutputStreamOperator<Integer> stream2 = env.socketTextStream("localhost", 9528).map(new MapFunction<String, Integer>() {
+            @Override
+            public Integer map(String value) throws Exception {
+                return Integer.parseInt(value);
+            }
+        });
+
+        ConnectedStreams<String, Integer> connect = stream1.connect(stream2);
+        connect.map(new CoMapFunction<String, Integer, String>() {
+            @Override
+            public String map1(String value) throws Exception {
+                return value.toUpperCase();
+            }
+
+            @Override
+            public String map2(Integer value) throws Exception {
+                return value * 10 + "";
+            }
+        }).print();
+
+    }
 
     public static void map(StreamExecutionEnvironment env) {
 
