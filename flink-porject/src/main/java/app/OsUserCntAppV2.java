@@ -11,6 +11,8 @@ import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import scala.Int;
 
+import java.util.Objects;
+
 public class OsUserCntAppV2 {
     public static void main(String[] args) throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -28,7 +30,7 @@ public class OsUserCntAppV2 {
                             return null;
                         }
                     }
-                }).filter(access -> access != null)
+                }).filter(Objects::nonNull)
                 .filter(new FilterFunction<Access>() {
                     @Override
                     public boolean filter(Access access) throws Exception {
