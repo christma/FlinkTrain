@@ -10,6 +10,7 @@
         <module name="flink-sql" />
         <module name="flink-dataset" />
         <module name="flink-basic" />
+        <module name="flink-porject" />
       </profile>
     </annotationProcessing>
   </component>
