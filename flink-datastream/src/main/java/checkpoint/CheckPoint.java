@@ -17,15 +17,17 @@ public class CheckPoint {
 
         env.enableCheckpointing(5000);
 
-        env.setRestartStrategy(RestartStrategies.fixedDelayRestart(3, Time.of(4, TimeUnit.SECONDS)));
-
+        env.setRestartStrategy(RestartStrategies.fixedDelayRestart(
+                3, // number of restart attempts
+                Time.of(3, TimeUnit.SECONDS) // delay
+        ));
         DataStreamSource<String> source = env.socketTextStream("localhost", 9527);
 
         source.map(new MapFunction<String, String>() {
             @Override
             public String map(String value) throws Exception {
                 if (value.contains("NN")) {
-                    throw new RuntimeException("gogogogo");
+                    throw new RuntimeException("gogogogo...");
                 } else {
                     return value.toLowerCase();
                 }
