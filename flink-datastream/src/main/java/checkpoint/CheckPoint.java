@@ -3,7 +3,6 @@ package checkpoint;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
-import org.apache.flink.runtime.executiongraph.restart.RestartStrategy;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
@@ -27,7 +26,7 @@ public class CheckPoint {
             @Override
             public String map(String value) throws Exception {
                 if (value.contains("NN")) {
-                    throw new RuntimeException("gogogogo...");
+                    throw new RuntimeException("go go go go...");
                 } else {
                     return value.toLowerCase();
                 }
