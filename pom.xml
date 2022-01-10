@@ -14,6 +14,7 @@
         <module>flink-dataset</module>
         <module>flink-basic</module>
         <module>flink-porject</module>
+        <module>flink-clickhouse</module>
     </modules>
 
     <properties>
@@ -99,6 +100,11 @@
                 <groupId>org.apache.flink</groupId>
                 <artifactId>flink-runtime-web_2.12</artifactId>
                 <version>1.13.1</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.yandex.clickhouse</groupId>
+                <artifactId>clickhouse-jdbc</artifactId>
+                <version>0.1.54</version>
             </dependency>
 
         </dependencies>
