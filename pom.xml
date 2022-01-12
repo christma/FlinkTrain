@@ -106,7 +106,11 @@
                 <artifactId>clickhouse-jdbc</artifactId>
                 <version>0.1.54</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-connector-jdbc_2.12</artifactId>
+                <version>1.13.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
