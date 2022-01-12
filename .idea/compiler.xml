@@ -6,11 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="flink-datastream" />
         <module name="flink-clickhouse" />
         <module name="flink-sql" />
-        <module name="flink-dataset" />
+        <module name="flink-cep" />
         <module name="flink-basic" />
+        <module name="flink-datastream" />
+        <module name="flink-dataset" />
         <module name="flink-porject" />
       </profile>
     </annotationProcessing>
