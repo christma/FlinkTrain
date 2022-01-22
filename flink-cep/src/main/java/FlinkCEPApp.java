@@ -75,6 +75,7 @@ public class FlinkCEPApp {
                 Access second = map.get("next").get(0);
                 AccessMsg accessMsg = new AccessMsg();
                 accessMsg.id = first.id;
+
                 accessMsg.first = first.date;
                 accessMsg.second = second.date;
                 accessMsg.msg = "出现连续两次登陆失败...";

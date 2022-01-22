@@ -18,10 +18,11 @@
         <module>flink-cep</module>
     </modules>
 
+
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <flink.version>1.12.1</flink.version>
+        <flink.version>1.10.0</flink.version>
         <scala.version>2.12</scala.version>
         <log4j.version>2.12.1</log4j.version>
     </properties>
@@ -117,6 +118,8 @@
                 <artifactId>flink-cep_2.12</artifactId>
                 <version>1.13.1</version>
             </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 </project>
