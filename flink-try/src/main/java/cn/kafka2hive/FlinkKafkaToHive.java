@@ -1,6 +1,7 @@
 package cn.kafka2hive;
 
 
+import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -16,11 +17,19 @@ public class FlinkKafkaToHive {
                 .inStreamingMode()
                 .build();
 
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+
+
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.createLocalEnvironmentWithWebUI(new Configuration());
 
         StreamTableEnvironment tableEnvironment = StreamTableEnvironment.create(env,settings);
 
         env.setParallelism(1);
+
+        Configuration conf = tableEnvironment.getConfig().getConfiguration();
+        conf.setString("table.exec.mini-batch.enabled", "true");
+        conf.setString("table.exec.mini-batch.allow-latency", "5s");
+        conf.setString("table.exec.mini-batch.size", "5000");
+        conf.setString("rest.flamegraph.enabled", "true");
 
 //      {"item":"D","price":917,"biz_time":1649076083575}
         tableEnvironment.executeSql(
