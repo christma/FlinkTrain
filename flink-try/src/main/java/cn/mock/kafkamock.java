@@ -28,7 +28,7 @@ public class kafkamock {
         kafkamock kafkamock = new kafkamock();
         while (true){
             kafkamock.mock();
-            Thread.sleep(500);
+            Thread.sleep(5000);
         }
     }
 
