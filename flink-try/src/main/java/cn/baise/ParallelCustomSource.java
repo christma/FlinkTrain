@@ -13,7 +13,7 @@ public class ParallelCustomSource implements ParallelSourceFunction<Integer> {
     public void run(SourceContext<Integer> sourceContext) throws Exception {
 
         while (running) {
-            sourceContext.collect(rd.nextInt());
+            sourceContext.collect(rd.nextInt(10));
             Thread.sleep(1000);
         }
 
