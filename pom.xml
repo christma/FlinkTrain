@@ -16,6 +16,8 @@
         <module>flink-porject</module>
         <module>flink-clickhouse</module>
         <module>flink-cep</module>
+        <module>realtime</module>
+        <module>base-train</module>
     </modules>
 
 

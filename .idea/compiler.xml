@@ -10,7 +10,9 @@
         <module name="flink-clickhouse" />
         <module name="flink-sql" />
         <module name="flink-cep" />
+        <module name="realtime" />
         <module name="flink-basic" />
+        <module name="base-train" />
         <module name="flink-datastream" />
         <module name="flink-dataset" />
         <module name="flink-porject" />
